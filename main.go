@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"strconv"
+	"flag"
 	"time"
 
 	"charm.land/bubbles/v2/progress"
@@ -46,17 +44,13 @@ func (m model) View() tea.View {
 }
 
 func main() {
-	mins := os.Args[1]
+	mins := flag.Float64("seconds", 3.0, "timer duration in seconds")
 
-	minsFloat, err := strconv.ParseFloat(mins, 64)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "provide seconds: %v\n", err)
-		os.Exit(1)
-	}
+	flag.Parse()
 
 	m := model{
 		progress: progress.New(progress.WithDefaultBlend()),
-		limit:    minsFloat,
+		limit:    *mins,
 	}
 
 	p := tea.NewProgram(m)
