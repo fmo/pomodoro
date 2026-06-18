@@ -2,4 +2,5 @@
 
 `pomodoro --seconds <seconds>` 
 
-<img width="348" height="63" alt="Screenshot 2026-06-18 at 19 00 55" src="https://github.com/user-attachments/assets/748ce7be-6378-4d0a-9611-7ae7bc982052" />
+<img width="300" height="79" alt="Screenshot 2026-06-18 at 19 06 39" src="https://github.com/user-attachments/assets/144bedfd-b292-48bf-b22d-884f6ab0570e" />
+
