@@ -1,9 +1,13 @@
 package main
 
 import (
+	"encoding/csv"
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
+	"strconv"
 	"time"
 
 	"charm.land/bubbles/v2/progress"
@@ -25,10 +29,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "q":
+			m.Save()
 			return m, tea.Quit
 		}
 	case tickMsg:
 		if m.progress.Percent() == 1.0 || m.limit == 0 {
+			m.Save()
 			return m, tea.Quit
 		}
 		m.count--
@@ -49,9 +55,39 @@ func (m model) View() tea.View {
 	)
 }
 
+func (m model) Save() error {
+	home, _ := os.UserHomeDir()
+	fileToSave := filepath.Join(home, "Library", "Application Support", "pomodoro")
+
+	err := os.MkdirAll(fileToSave, 0o700)
+	if err != nil {
+		return err
+	}
+
+	fullFileName := filepath.Join(fileToSave, "pomodoro.csv")
+
+	var f *os.File
+
+	f, err = os.OpenFile(fullFileName, os.O_APPEND|os.O_WRONLY, 0o700)
+	if err != nil {
+		f, err = os.Create(fullFileName)
+		if err != nil {
+			return err
+		}
+	}
+
+	w := csv.NewWriter(f)
+	err = w.Write([]string{time.Now().Format(time.RFC3339), strconv.Itoa(m.limit - m.count)})
+	if err != nil {
+		return err
+	}
+	w.Flush()
+
+	return nil
+}
+
 func main() {
 	duration := flag.String("duration", "3m", "timer duration")
-
 	flag.Parse()
 
 	d, err := time.ParseDuration(*duration)
