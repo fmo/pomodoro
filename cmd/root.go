@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	"charm.land/bubbles/v2/progress"
@@ -77,7 +76,10 @@ func (m model) Save() error {
 	}
 
 	w := csv.NewWriter(f)
-	err = w.Write([]string{time.Now().Format(time.RFC3339), strconv.Itoa(m.limit - m.count)})
+
+	duration := time.Duration(m.limit-m.count) * time.Second
+
+	err = w.Write([]string{time.Now().Format(time.RFC3339), duration.String()})
 	if err != nil {
 		return err
 	}
@@ -95,9 +97,9 @@ func tickCmd() tea.Cmd {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "something",
-	Short: "something bla",
-	Long:  "short mort",
+	Use:   "pomodoro",
+	Short: "Start your pomodoro time",
+	Long:  "Give your full attention and avoid distructions",
 	Run: func(cmd *cobra.Command, args []string) {
 		duration, _ := cmd.Flags().GetString("duration")
 
@@ -118,7 +120,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	rootCmd.PersistentFlags().String("duration", "10s", "Write duration like 1h20m10s")
+	rootCmd.PersistentFlags().String("duration", "10s", "write duration like 1h20m10s")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stdout, err)
