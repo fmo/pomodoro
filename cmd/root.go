@@ -63,7 +63,13 @@ func (m model) Save() error {
 		return err
 	}
 
-	fullFileName := filepath.Join(fileToSave, "pomodoro.csv")
+	csvFile := "pomodoro.csv"
+
+	if os.Getenv("csvfile") != "" {
+		csvFile = os.Getenv("csvfile")
+	}
+
+	fullFileName := filepath.Join(fileToSave, csvFile)
 
 	var f *os.File
 

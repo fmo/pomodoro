@@ -24,7 +24,11 @@ var statsCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		filename := filepath.Join(homeDir, "Library", "Application Support", "pomodoro", "pomodoro.csv")
+		csvFile := "pomodoro.csv"
+		if os.Getenv("csvfile") != "" {
+			csvFile = os.Getenv("csvfile")
+		}
+		filename := filepath.Join(homeDir, "Library", "Application Support", "pomodoro", csvFile)
 		file, err := os.Open(filename)
 		if err != nil {
 			log.Fatal(err)
