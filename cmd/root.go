@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"encoding/csv"
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
 
 	"charm.land/bubbles/v2/progress"
@@ -20,8 +18,10 @@ func init() {
 
 type model struct {
 	progress progress.Model
-	limit    int
-	count    int
+	// It's whole duration time in seconds
+	limit int
+	// This starts from duration time in seconds and counts down till zero
+	count int
 }
 
 func (m model) Init() tea.Cmd {
@@ -33,12 +33,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "q":
-			m.Save()
+			Save(m.limit, m.count)
 			return m, tea.Quit
 		}
 	case tickMsg:
 		if m.progress.Percent() == 1.0 || m.limit == 0 {
-			m.Save()
+			Save(m.limit, m.count)
 			return m, tea.Quit
 		}
 		m.count--
@@ -58,46 +58,6 @@ func (m model) View() tea.View {
 	return tea.NewView(
 		fmt.Sprintf("%s\nLeft: %s.", m.progress.View(), d.String()),
 	)
-}
-
-func (m model) Save() error {
-	home, _ := os.UserHomeDir()
-	fileToSave := filepath.Join(home, "Library", "Application Support", "pomodoro")
-
-	err := os.MkdirAll(fileToSave, 0o700)
-	if err != nil {
-		return err
-	}
-
-	csvFile := "pomodoro.csv"
-
-	if os.Getenv("csvfile") != "" {
-		csvFile = os.Getenv("csvfile")
-	}
-
-	fullFileName := filepath.Join(fileToSave, csvFile)
-
-	var f *os.File
-
-	f, err = os.OpenFile(fullFileName, os.O_APPEND|os.O_WRONLY, 0o700)
-	if err != nil {
-		f, err = os.Create(fullFileName)
-		if err != nil {
-			return err
-		}
-	}
-
-	w := csv.NewWriter(f)
-
-	duration := time.Duration(m.limit-m.count) * time.Second
-
-	err = w.Write([]string{time.Now().Format(time.RFC3339), duration.String()})
-	if err != nil {
-		return err
-	}
-	w.Flush()
-
-	return nil
 }
 
 type tickMsg time.Time
