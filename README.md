@@ -4,7 +4,7 @@
 
 ## How to run
 
-`pomodoro --duration 3m10s  
+`pomodoro --duration 3m10s`
 
 ## Get the stats
 
