@@ -70,7 +70,13 @@ func Save(limit, count int) error {
 		}
 	}
 
-	CreateBackup(f)
+	if cfg != nil {
+		if bup, ok := cfg.Get("app.backup-active").(bool); ok {
+			if bup {
+				CreateBackup(f)
+			}
+		}
+	}
 
 	w := csv.NewWriter(f)
 

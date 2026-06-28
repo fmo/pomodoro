@@ -13,11 +13,13 @@ func main() {
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(".")
 
+	viper.ReadInConfig()
+
 	handler := slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	})
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
 
-	cmd.Execute()
+	cmd.Execute(viper.GetViper())
 }

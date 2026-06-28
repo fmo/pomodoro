@@ -9,7 +9,10 @@ import (
 	"charm.land/bubbles/v2/progress"
 	tea "charm.land/bubbletea/v2"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
+
+var cfg *viper.Viper
 
 func init() {
 	rootCmd.PersistentFlags().String("period", "today", "period of stats")
@@ -91,9 +94,9 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func Execute() {
+func Execute(viper *viper.Viper) {
 	rootCmd.PersistentFlags().String("duration", "10s", "write duration like 1h20m10s")
-
+	cfg = viper
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stdout, err)
 		os.Exit(1)
