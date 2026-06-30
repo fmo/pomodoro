@@ -92,7 +92,7 @@ func Execute(app *App) {
 	rootCmd.PersistentFlags().String("period", "today", "period of stats")
 	rootCmd.PersistentFlags().String("duration", "10s", "write duration like 1h20m10s")
 
-	rootCmd.AddCommand(statsCmd)
+	rootCmd.AddCommand(NewStatsCmd(app))
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stdout, err)
