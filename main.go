@@ -10,8 +10,9 @@ import (
 )
 
 func main() {
-	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelDebug,
+	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level:     slog.LevelDebug,
+		AddSource: true,
 	})
 	logger := slog.New(handler)
 
@@ -26,6 +27,11 @@ func main() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(configPath)
+
+	if err := os.MkdirAll(configPath, 0o700); err != nil {
+		logger.Error("cant create directories", "err", err)
+		os.Exit(1)
+	}
 
 	configFile := filepath.Join(configPath, "config.yml")
 
@@ -47,11 +53,8 @@ func main() {
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
-		slog.Debug("cant read config file", "err", err)
-		if err := viper.WriteConfig(); err != nil {
-			slog.Error("cant create config file", "err", err)
-			os.Exit(1)
-		}
+		logger.Error("cant read config file", "err", err)
+		os.Exit(1)
 	}
 
 	app := cmd.NewApp(logger, viper.GetViper())
