@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	handler := slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{
+	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	})
 	logger := slog.New(handler)
@@ -22,17 +22,23 @@ func main() {
 	}
 	configPath := filepath.Join(homeDir, "Library", "Application Support", "pomodoro")
 
+	viper.WithLogger(logger)
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(configPath)
 
 	configFile := filepath.Join(configPath, "config.yml")
 
-	_, err = os.Create(configFile)
+	_, err = os.Open(configFile)
 	if err != nil {
-		logger.Error("cant create config", "err", err)
+		_, err = os.Create(configFile)
+		if err != nil {
+			logger.Error("cant create config", "err", err)
+		}
 	}
-
+	if os.Getenv("env") != "" {
+		viper.Set("env", "dev")
+	}
 	viper.Set("csv", "pomodoro.csv")
 
 	err = viper.WriteConfig()
