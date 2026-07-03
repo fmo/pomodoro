@@ -12,9 +12,9 @@ import (
 )
 
 type App struct {
-	logger  *slog.Logger
-	viper   *viper.Viper
-	csvFile *os.File
+	logger       *slog.Logger
+	viper        *viper.Viper
+	pomodoroFile *os.File
 }
 
 func NewApp(logger *slog.Logger, viper *viper.Viper, csvFile *os.File) *App {
@@ -25,12 +25,12 @@ func (app *App) Save(limit, count int) error {
 	if app.viper != nil {
 		if bup, ok := app.viper.Get("app.backup-active").(bool); ok {
 			if bup {
-				CreateBackup(app.csvFile)
+				CreateBackup(app.pomodoroFile)
 			}
 		}
 	}
 
-	w := csv.NewWriter(app.csvFile)
+	w := csv.NewWriter(app.pomodoroFile)
 
 	// completed is total duration in seconds - count down time, ie total 30 seconds - 10 count down (left)
 	completed := time.Duration(limit-count) * time.Second

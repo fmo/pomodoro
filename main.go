@@ -22,7 +22,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	csvFile, err := cmd.GetCsvFile()
+	openPomodoroFile, err := cmd.OpenPomodoroFile()
 	if err != nil {
 		logger.Error("cant get the csv file", "err", err)
 		os.Exit(1)
@@ -57,7 +57,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	app := cmd.NewApp(logger, viper.GetViper(), csvFile)
+	app := cmd.NewApp(logger, viper.GetViper(), openPomodoroFile)
 
 	cmd.Execute(app)
 }

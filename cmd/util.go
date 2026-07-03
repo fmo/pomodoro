@@ -40,7 +40,7 @@ func GetProjectPath(createDirs bool) (string, error) {
 	return projectPath, nil
 }
 
-func GetCsvFile() (*os.File, error) {
+func OpenPomodoroFile() (*os.File, error) {
 	fp, err := GetProjectPath(false)
 	if err != nil {
 		return nil, err
