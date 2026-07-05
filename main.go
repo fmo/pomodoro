@@ -61,7 +61,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	logger.Debug("should be read all the config", "pomodoro-file", viper.GetString("pomodoro-file"))
+	logger.Debug("configs are set", "pomodoro-file", viper.GetString("pomodoro-file"))
 
 	// Pomodoro File
 	openPomodoroFile, err := cmds.OpenFile(viper.GetString("pomodoro-file"))
