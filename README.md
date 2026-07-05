@@ -16,7 +16,8 @@
 
 ## Screen Shot
 
-<img width="439" height="129" alt="Screenshot 2026-06-21 at 19 05 29" src="https://github.com/user-attachments/assets/b67661d2-f266-4f2f-ad65-6558d29ff58c" />
+<img width="374" height="112" alt="Screenshot 2026-07-05 at 13 22 11" src="https://github.com/user-attachments/assets/0fa563cd-c23d-4f87-8111-31a08e40745a" />
+
 
 
 
