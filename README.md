@@ -2,10 +2,6 @@
 
 `go install github.com/fmo/pomodoro@latest`
 
-## Help
-
-`pomodoro help`
-
 ## How to run
 
 `pomodoro start --duration 15m`
@@ -17,6 +13,10 @@
 ## Screen Shot
 
 <img width="374" height="112" alt="Screenshot 2026-07-05 at 13 22 11" src="https://github.com/user-attachments/assets/0fa563cd-c23d-4f87-8111-31a08e40745a" />
+
+## Help
+
+`pomodoro help`
 
 
 
