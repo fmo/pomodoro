@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	// Project Path
+	// Project Path to add config path
 	projectPath, err := cmds.GetProjectPath(true)
 	if err != nil {
 		log.Fatal("project path fetching failed")
@@ -29,7 +29,7 @@ func main() {
 	})
 	logger := slog.New(handler)
 
-	// Config
+	// Create Config if does not exist
 	_, err = cmds.OpenFile("config.yml")
 	if err != nil {
 		logger.Error("cant open config file", "err", err)
@@ -41,8 +41,8 @@ func main() {
 	viper.AddConfigPath(projectPath)
 
 	viper.Set("pomodoro-file", "pomodoro.csv")
-	viper.Set("backups", true)
 	viper.Set("backup-file", "pomodoro_bup.csv")
+	viper.Set("backups", true)
 
 	err = viper.WriteConfig()
 	if err != nil {
