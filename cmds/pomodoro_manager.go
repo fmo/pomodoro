@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -14,10 +15,11 @@ import (
 
 type PomodoroManager struct {
 	pomodoroFile *os.File
+	logger       *slog.Logger
 }
 
-func NewPomodoroManager(pomodoroFile *os.File) *PomodoroManager {
-	return &PomodoroManager{pomodoroFile}
+func NewPomodoroManager(pomodoroFile *os.File, logger *slog.Logger) *PomodoroManager {
+	return &PomodoroManager{pomodoroFile, logger}
 }
 
 func (m *PomodoroManager) Save(limit, count int) error {
@@ -134,13 +136,14 @@ func (m *PomodoroManager) Restore(pomodoroFilename, backupFilename string) error
 		return err
 	}
 
-	pomodoroFile, err := os.OpenFile(filepath.Join(projectPath, pomodoroFilename), os.O_RDWR, 0o700)
+	pomodoroFile, err := os.Create(filepath.Join(projectPath, pomodoroFilename))
 	if err != nil {
 		return err
 	}
 
 	_, err = io.Copy(pomodoroFile, backupFile)
 	if err != nil {
+		m.logger.Error("cant copy", "err", err)
 		return err
 	}
 

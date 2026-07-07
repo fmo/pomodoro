@@ -70,7 +70,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	pomodoroManager := cmds.NewPomodoroManager(openPomodoroFile)
+	pomodoroManager := cmds.NewPomodoroManager(openPomodoroFile, logger)
 
 	app := cmds.NewApp(logger, viper.GetViper(), pomodoroManager)
 
