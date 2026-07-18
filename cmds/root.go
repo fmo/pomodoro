@@ -31,6 +31,12 @@ func Execute(app *App) {
 	restoreCmd := NewRestoreCmd(app)
 	rootCmd.AddCommand(restoreCmd)
 
+	// Project Cmd
+	projectCmd := NewProjectCmd(app)
+	projectCmd.Flags().String("add", "", "give project name")
+	projectCmd.Flags().Bool("list", false, "list projects")
+	rootCmd.AddCommand(projectCmd)
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stdout, err)
 		os.Exit(1)
