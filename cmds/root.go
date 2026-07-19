@@ -16,8 +16,6 @@ func Execute(app *App) {
 
 	// Pomodoro Cmd
 	pomodoroCmd := NewPomodoroCmd(app)
-	pomodoroCmd.Flags().String("start", "10s", "write duration like 1h20m10s")
-	pomodoroCmd.Flags().String("stats", "today", "pomodoro stats")
 	rootCmd.AddCommand(pomodoroCmd)
 
 	// Config Cmd
@@ -33,8 +31,6 @@ func Execute(app *App) {
 
 	// Project Cmd
 	projectCmd := NewProjectCmd(app)
-	projectCmd.Flags().String("add", "", "give project name")
-	projectCmd.Flags().Bool("list", false, "list projects")
 	rootCmd.AddCommand(projectCmd)
 
 	if err := rootCmd.Execute(); err != nil {

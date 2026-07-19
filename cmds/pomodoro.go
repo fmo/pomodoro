@@ -1,6 +1,7 @@
 package cmds
 
 import (
+	"encoding/csv"
 	"fmt"
 	"log"
 	"os"
@@ -30,7 +31,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "q":
-			m.app.SavePomodoro(m.limit, m.count)
+
+			timePassed := m.limit - m.count
+
+			timePassedDuration, err := time.ParseDuration(fmt.Sprintf("%ds", timePassed))
+			if err != nil {
+				log.Fatal("cant convert string to time duration")
+			}
+
+			csvWriter := csv.NewWriter(os.Stdout)
+			csvWriter.Write([]string{time.Now().Format(time.RFC3339), timePassedDuration.String(), "there"})
+			csvWriter.Flush()
+
 			m.app.logger.Info("quitting pomodoro session without finishing")
 			return m, tea.Quit
 		}
@@ -68,42 +80,18 @@ func tickCmd() tea.Cmd {
 }
 
 func NewPomodoroCmd(app *App) *cobra.Command {
-	return &cobra.Command{
+	pomodoroCmd := &cobra.Command{
 		Use:   "pomodoro",
 		Short: "Start your pomodoro time",
 		Long:  "No way back now you gotta focus",
-		Run: func(cmd *cobra.Command, args []string) {
-			stats, err := cmd.Flags().GetString("stats")
-			if err != nil {
-				app.logger.Error("need period to show stats", "err", err)
-				os.Exit(1)
-			}
-
-			total, err := app.pomodoroManager.TotalTime(stats)
-			if err != nil {
-				app.logger.Error("cant get total time", "err", err)
-				os.Exit(1)
-			}
-
-			fmt.Printf("%s\n", total)
-			os.Exit(0)
-
-			start, _ := cmd.Flags().GetString("start")
-
-			d, err := time.ParseDuration(start)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			m := model{
-				app:      app,
-				progress: progress.New(progress.WithDefaultBlend()),
-				limit:    int(d.Seconds()),
-				count:    int(d.Seconds()),
-			}
-
-			p := tea.NewProgram(m)
-			p.Run()
-		},
 	}
+
+	statsCmd := NewStatsCmd(app)
+	pomodoroCmd.AddCommand(statsCmd)
+
+	startCmd := NewStartCmd(app)
+	startCmd.Flags().String("duration", "10s", "enter pomodoro duration")
+	pomodoroCmd.AddCommand(startCmd)
+
+	return pomodoroCmd
 }
