@@ -30,7 +30,9 @@ func NewProjectList(app *App) *cobra.Command {
 			if err != nil {
 				log.Fatal("cant read records")
 			}
-			ui.Render(records)
+			if err := ui.Render(records); err != nil {
+				app.logger.Error("cant render records", "err", err)
+			}
 		},
 	}
 }

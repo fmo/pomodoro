@@ -24,11 +24,12 @@ func NewProjectAdd(app *App) *cobra.Command {
 
 			f, err := os.OpenFile(projectCsv, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0o600)
 			if err != nil {
-				log.Fatal("cant open project csv")
+				app.logger.Error("cant open project csv", "err", err)
+				os.Exit(1)
 			}
 
 			csvWriter := csv.NewWriter(f)
-			csvWriter.Write([]string{projectName})
+			csvWriter.Write([]string{projectName, ""})
 			csvWriter.Flush()
 			os.Exit(0)
 		},

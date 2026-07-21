@@ -1,8 +1,8 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
-	"os"
 	"strconv"
 
 	"charm.land/bubbles/v2/table"
@@ -49,7 +49,7 @@ func (m model) View() tea.View {
 	return tea.NewView(baseStyle.Render(m.table.View()) + "\n " + m.table.HelpView() + "\n")
 }
 
-func Render(records [][]string) {
+func Render(records [][]string) error {
 	columns := []table.Column{
 		{Title: "Rank", Width: 4},
 		{Title: "Project", Width: 10},
@@ -60,6 +60,10 @@ func Render(records [][]string) {
 
 	i := 0
 	for _, record := range records {
+		if len(record) < 2 {
+			return errors.New("each project should have 2 columns")
+		}
+
 		i++
 		iInStr := strconv.Itoa(i)
 		rows = append(rows, table.Row{iInStr, record[0], record[1]})
@@ -89,7 +93,8 @@ func Render(records [][]string) {
 	m := model{t}
 
 	if _, err := tea.NewProgram(m).Run(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
+		return fmt.Errorf("Error running program: %w", err)
 	}
+
+	return nil
 }

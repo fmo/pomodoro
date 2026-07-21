@@ -2,7 +2,6 @@ package cmds
 
 import (
 	"encoding/csv"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -19,19 +18,22 @@ func NewProjectDefault(app *App) *cobra.Command {
 
 			fileToRead, err := os.Open(fullPath)
 			if err != nil {
-				log.Fatal(err)
+				app.logger.Error("cant read project file", "err", err)
+				os.Exit(1)
 			}
 
 			r := csv.NewReader(fileToRead)
 
 			projects, err := r.ReadAll()
 			if err != nil {
-				log.Fatal(err)
+				app.logger.Error("cant read projects file", "err", err)
+				os.Exit(1)
 			}
 
 			fileToWrite, err := os.OpenFile(fullPath, os.O_TRUNC|os.O_RDWR, 0o600)
 			if err != nil {
-				log.Fatal(err)
+				app.logger.Error("cant open project file", "err", err)
+				os.Exit(1)
 			}
 
 			w := csv.NewWriter(fileToWrite)
